@@ -4,13 +4,13 @@ namespace App\Controller;
 use App\Controller\AppController;
 
 /**
- * Productos Controller
+ * Producto Controller
  *
- * @property \App\Model\Table\ProductosTable $Productos
+ * @property \App\Model\Table\ProductoTable $Producto
  *
  * @method \App\Model\Entity\Producto[]|\Cake\Datasource\ResultSetInterface paginate($object = null, array $settings = [])
  */
-class ProductosController extends AppController
+class ProductoController extends AppController
 {
     /**
      * Index method
@@ -19,9 +19,12 @@ class ProductosController extends AppController
      */
     public function index()
     {
-        $productos = $this->paginate($this->Productos);
+        $this->paginate = [
+            'contain' => ['Categoria'],
+        ];
+        $producto = $this->paginate($this->Producto);
 
-        $this->set(compact('productos'));
+        $this->set(compact('producto'));
     }
 
     /**
@@ -33,8 +36,8 @@ class ProductosController extends AppController
      */
     public function view($id = null)
     {
-        $producto = $this->Productos->get($id, [
-            'contain' => [],
+        $producto = $this->Producto->get($id, [
+            'contain' => ['Categoria'],
         ]);
 
         $this->set('producto', $producto);
@@ -47,21 +50,18 @@ class ProductosController extends AppController
      */
     public function add()
     {
-        $producto = $this->Productos->newEntity();
+        $producto = $this->Producto->newEntity();
         if ($this->request->is('post')) {
-            $data = $this->request->getData();
-            $data ["id_categoria"]= intval($data["id_categoria"]);
-            debug ($data);
-
-            $producto = $this->Productos->patchEntity($producto, $this->request->getData());
-            if ($this->Productos->save($producto)) {
-                $this->Flash->success(__('The producto has been saved.'));
+            $producto = $this->Producto->patchEntity($producto, $this->request->getData());
+            if ($this->Producto->save($producto)) {
+                $this->Flash->success(__('El producto se guardo exitosamente.'));
 
                 return $this->redirect(['action' => 'index']);
             }
-            $this->Flash->error(__('The producto could not be saved. Please, try again.'));
+            $this->Flash->error(__('El producto no se ha guardado. por favor, intente de nuevo.'));
         }
-        $this->set(compact('producto'));
+        $categoria = $this->Producto->Categoria->find('list', ['limit' => 200]);
+        $this->set(compact('producto', 'categoria'));
     }
 
     /**
@@ -73,19 +73,20 @@ class ProductosController extends AppController
      */
     public function edit($id = null)
     {
-        $producto = $this->Productos->get($id, [
+        $producto = $this->Producto->get($id, [
             'contain' => [],
         ]);
         if ($this->request->is(['patch', 'post', 'put'])) {
-            $producto = $this->Productos->patchEntity($producto, $this->request->getData());
-            if ($this->Productos->save($producto)) {
-                $this->Flash->success(__('The producto has been saved.'));
+            $producto = $this->Producto->patchEntity($producto, $this->request->getData());
+            if ($this->Producto->save($producto)) {
+                $this->Flash->success(__('El producto se edito exitosamente.'));
 
                 return $this->redirect(['action' => 'index']);
             }
-            $this->Flash->error(__('The producto could not be saved. Please, try again.'));
+            $this->Flash->error(__('El producto no se ha guardado. por favor, intente de nuevo.'));
         }
-        $this->set(compact('producto'));
+        $categoria = $this->Producto->Categoria->find('list', ['limit' => 200]);
+        $this->set(compact('producto', 'categoria'));
     }
 
     /**
@@ -98,11 +99,11 @@ class ProductosController extends AppController
     public function delete($id = null)
     {
         $this->request->allowMethod(['post', 'delete']);
-        $producto = $this->Productos->get($id);
-        if ($this->Productos->delete($producto)) {
-            $this->Flash->success(__('The producto has been deleted.'));
+        $producto = $this->Producto->get($id);
+        if ($this->Producto->delete($producto)) {
+            $this->Flash->success(__('El producto ha sido eliminado.'));
         } else {
-            $this->Flash->error(__('The producto could not be deleted. Please, try again.'));
+            $this->Flash->error(__('El producto no se ha eliminado. por favor, intente de nuevo'));
         }
 
         return $this->redirect(['action' => 'index']);

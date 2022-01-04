@@ -7,7 +7,9 @@ use Cake\ORM\Table;
 use Cake\Validation\Validator;
 
 /**
- * Productos Model
+ * Producto Model
+ *
+ * @property \App\Model\Table\CategoriaTable&\Cake\ORM\Association\BelongsTo $Categoria
  *
  * @method \App\Model\Entity\Producto get($primaryKey, $options = [])
  * @method \App\Model\Entity\Producto newEntity($data = null, array $options = [])
@@ -18,7 +20,7 @@ use Cake\Validation\Validator;
  * @method \App\Model\Entity\Producto[] patchEntities($entities, array $data, array $options = [])
  * @method \App\Model\Entity\Producto findOrCreate($search, callable $callback = null, $options = [])
  */
-class ProductosTable extends Table
+class ProductoTable extends Table
 {
     /**
      * Initialize method
@@ -30,10 +32,14 @@ class ProductosTable extends Table
     {
         parent::initialize($config);
 
-        $this->setTable('productos');
-        $this->setDisplayField('id_producto');
-        $this->setPrimaryKey('id_producto');
-        
+        $this->setTable('producto');
+        $this->setDisplayField('id');
+        $this->setPrimaryKey('id');
+
+        $this->belongsTo('Categoria', [
+            'foreignKey' => 'categoria_id',
+            'joinType' => 'INNER',
+        ]);
     }
 
     /**
@@ -45,26 +51,34 @@ class ProductosTable extends Table
     public function validationDefault(Validator $validator)
     {
         $validator
-            ->integer('id_producto')
-            ->allowEmptyString('id_producto', null, 'create');
+            ->integer('id')
+            ->allowEmptyString('id', null, 'create');
 
         $validator
-            ->scalar('descripcion_prod')
-            ->maxLength('descripcion_prod', 100)
-            ->requirePresence('descripcion_prod', 'create')
-            ->notEmptyString('descripcion_prod');
+            ->scalar('Nombre_prod')
+            ->maxLength('Nombre_prod', 100)
+            ->requirePresence('Nombre_prod', 'create')
+            ->notEmptyString('Nombre_prod');
 
         $validator
-            ->scalar('id_categoria')
-            ->maxLength('id_categoria', 100)
-            ->requirePresence('id_categoria', 'create')
-            ->notEmptyString('id_categoria');
-
-        $validator
-            ->scalar('estado')
-            ->requirePresence('estado', 'create')
-            ->notEmptyString('estado');
+            ->scalar('Estado')
+            ->requirePresence('Estado', 'create')
+            ->notEmptyString('Estado');
 
         return $validator;
+    }
+
+    /**
+     * Returns a rules checker object that will be used for validating
+     * application integrity.
+     *
+     * @param \Cake\ORM\RulesChecker $rules The rules object to be modified.
+     * @return \Cake\ORM\RulesChecker
+     */
+    public function buildRules(RulesChecker $rules)
+    {
+        $rules->add($rules->existsIn(['categoria_id'], 'Categoria'));
+
+        return $rules;
     }
 }

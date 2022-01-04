@@ -91,7 +91,7 @@ Router::scope('/', function (RouteBuilder $routes) {
     $routes->fallbacks(DashedRoute::class);
 });
 
-router::connect("/productos/index",["controller" => "productos", "action" => "index"]);
+router::connect("/producto/index",["controller" => "producto", "action" => "index"]);
 
 /**
  * If you need a different set of middleware or none at all,

@@ -1,7 +1,7 @@
 <?php
 use Migrations\AbstractMigration;
 
-class CreateProductosTable extends AbstractMigration
+class CrearTablaCate extends AbstractMigration
 {
     /**
      * Change Method.
@@ -12,10 +12,10 @@ class CreateProductosTable extends AbstractMigration
      */
     public function change()
     {
-        $table = $this -> table("Productos");
-        $table  -> addcolumn("descripcion_prod","string", array("limit" => 100))
-                -> addcolumn("estado","enum",array("values" => "baja,alta"))
+        $table = $this->table("categoria");
+        $table ->addColumn('descripcion_cat', 'string',["limit" => 100] )
                 ->create();
-
+        
+    
     }
 }
